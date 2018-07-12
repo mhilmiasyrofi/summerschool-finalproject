@@ -1,19 +1,21 @@
 install.packages("rjson")
 install.packages("jsonlite")
 install.packages("quanteda")
+install.packages("wordcloud")
 library("rjson")
 library("jsonlite")
 library("quanteda")
+library("wordcloud")
 
 
-fileReview = "Cell_Phones_and_Accessories_5.json"
+fileReview = "data/Cell_Phones_and_Accessories_5.json"
 conn2 <- file(fileReview,open="r")
 df1 = stream_in(conn2)
 close(conn2)
 
 View(head(df1))
 
-fileName = "CellPhones.strict"
+fileName = "data/CellPhones.strict"
 
 conn <- file(fileName,open="r")
 linn <-readLines(conn)
@@ -83,6 +85,23 @@ df$Category = cats
 # View(head(df))
 View(df)
 
-dtm.wordcloud(dtm = NULL, nterms = 100, freq.fun = NULL, terms = NULL,
-              freqs = NULL, scale = c(6, 0.5), min.freq = 1, rot.per = 0.15,
-              pal = brewer.pal(6, "YlGnBu"))
+dtm <- dfm(as.character(df$Review), tolower = TRUE, stem = TRUE,   # create dtm with preprocessing
+           remove_punct = TRUE, remove = stopwords(source = "smart")) 
+
+topfeatures(dtm, 10)
+
+?dfm
+
+doc_freq <- docfreq(dtm)         # document frequency per term (column) 
+dtm <- dtm[, doc_freq >= 40]      # select terms with doc_freq >= 2 
+dtm <- dfm_weight(dtm, "tfidf")  # weight the features using tf-idf 
+## Warning: scheme = "tfidf" is deprecated; use dfm_tfidf(x) instead
+# head(dtm)
+
+col <- sapply(seq(0.5, 1, 0.5), function(x) adjustcolor("#1F78B4", x))
+
+textplot_wordcloud(dtm, color = col)
+
+?wordcloud
+
+
