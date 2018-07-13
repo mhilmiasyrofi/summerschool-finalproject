@@ -66,8 +66,14 @@ extractChunks <- function(x) {
   
 }
 
-main = extractChunks("Complimentary gym access for two for the length of stay $12 value per person per day")
+sentence = c("Having 32g of ram and a faster processor is a good improvement", 
+  "The usual hassle of changing all apps and data over to a new cellphone is always present")
 
+
+for (s in sentence) {
+  key = extractChunks(s)
+  print(key)
+}
 
 
 # ===============================================
@@ -193,3 +199,4 @@ print(ratesNokia)
 summary = data.frame(category, ratesSamsung, ratesApple, ratesNokia)
 
 View(summary)
+  
